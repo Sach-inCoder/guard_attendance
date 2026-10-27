@@ -1,0 +1,8 @@
+.main_guard_wrapper{
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    min-height: 100dvh;
+    border-radius: 8px;
+}

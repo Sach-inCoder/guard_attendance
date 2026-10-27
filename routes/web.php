@@ -1,0 +1,39 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AccountsController;
+use App\Http\Controllers\GuardController;
+use App\Http\Controllers\AttendanceController;
+
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])
+        ->name('login');
+
+    Route::post('/login', [LoginController::class, 'login'])
+        ->middleware('throttle:5,1')
+        ->name('login.submit');
+});
+Route::middleware('auth')->group(function () {
+    Route::post('/logout',[LoginController::class,'logout'])->name('logout');
+});
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class,'dashboard',])->name('admin.dashboard');
+    Route::get('/admin/guards', [AdminController::class,'guards',])->name('admin.guards');
+});
+Route::middleware(['auth', 'role:accounts'])->group(function () {
+    Route::get('/accounts/dashboard', [AccountsController::class,'dashboard',])->name('accounts.dashboard');
+    
+});
+Route::middleware(['auth', 'role:guard'])->group(function () {
+    Route::get('/guard/dashboard', [GuardController::class,'dashboard',])->name('guard.dashboard');
+    Route::prefix('/guard/my')
+    ->name('my.')
+    ->group(function (){
+        Route::get('/attendance',[AttendanceController::class,'myAttendance'])->name('attendance');
+    });
+});
