@@ -2,6 +2,8 @@
 @section('page-title', 'Guards')
 @section('content')
 <div class="">
+    <a class="btn btn-success btn-sm" href="">Add Guard</a>
+    <hr>
     <div
         class="table-responsive"
     >
@@ -16,6 +18,7 @@
                     <th>S.no</th>
                     <th>Name</th>
                     <th>Status</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody class="table-group-divider">
@@ -25,7 +28,10 @@
                 >
                     <td>{{ $guards->firstItem() + $loop->index }}</td>
                     <td scope="row">{{ $guard->employee_id }} | {{ $guard->full_name }}</td>
-                    <td><span class="badge text-bg-success">Active</span></td>
+                    <td><span class="badge text-bg-{{$guard->employment_status == 'active' ? 'success' : 'danger' }}">{{$guard->employment_status == 'active' ? 'Active' : 'Not Active' }}</span></td>
+                    <td>
+                        <a href="" class="btn btn-success btn-sm">Edit</a>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

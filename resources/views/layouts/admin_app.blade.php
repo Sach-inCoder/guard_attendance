@@ -33,6 +33,10 @@
                     class="nav-link {{ request()->routeIs('admin.guards') ? 'active' : '' }}">
                     Guards
                 </a>
+                <a href="{{ route('admin.companies') }}"
+                    class="nav-link {{ request()->routeIs('admin.companies') ? 'active' : '' }}">
+                    Companies
+                </a>
             </nav>
         </aside>
         <main class="admin-main">
