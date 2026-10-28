@@ -29,13 +29,17 @@
                     class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                     Dashboard
                 </a>
-                <a href="{{ route('admin.guards') }}"
-                    class="nav-link {{ request()->routeIs('admin.guards') ? 'active' : '' }}">
+                <a href="{{ route('admin.guards.index') }}"
+                    class="nav-link {{ request()->routeIs('admin.guards.index') ? 'active' : '' }}">
                     Guards
                 </a>
-                <a href="{{ route('admin.companies') }}"
-                    class="nav-link {{ request()->routeIs('admin.companies') ? 'active' : '' }}">
+                <a href="{{ route('admin.companies.index') }}"
+                    class="nav-link {{ request()->routeIs('admin.companies.index') ? 'active' : '' }}">
                     Companies
+                </a>
+                <a href="{{ route('admin.sites.index') }}"
+                    class="nav-link {{ request()->routeIs('admin.sites.index') ? 'active' : '' }}">
+                    Sites
                 </a>
             </nav>
         </aside>

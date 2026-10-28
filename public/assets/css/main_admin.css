@@ -2,6 +2,11 @@ body {
     background: #f5f6fa;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 .admin-wrapper {
     min-height: 100vh;
 }

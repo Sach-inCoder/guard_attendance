@@ -17,25 +17,28 @@
             </div>
             <div class="row g-3">
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm">
+                    <div class="card ">
                         <div class="card-body">
-                            <p class="text-secondary mb-2">Total Guards</p>
+                            <p class="text-secondary mb-2">Active Guards</p>
                             <h3 class="fw-bold">{{$stats['guards']}}</h3>
-                            <a href="{{ route('admin.guards') }}" class="btn btn-primary btn-sm">View <i class="fas fa-eye"></i></a>
+                            <a href="{{ route('admin.guards.index') }}" class="btn btn-primary btn-sm">View <i class="fas fa-eye"></i></a>
                         </div>
                     </div>
                 </div>
+                
                 <div class="col-md-4">
-                    <div class="card border-0 shadow-sm">
+                    <div class="card ">
                         <div class="card-body">
-                            <p class="text-secondary mb-2">Present Today</p>
-                            <h3 class="fw-bold text-success">--</h3>
+                            <p class="text-secondary mb-2">Active Companies</p>
+                            <h3 class="fw-bold">{{$stats['companies']}}</h3>
+                            <a href="{{ route('admin.companies.index') }}" class="btn btn-primary btn-sm">View <i class="fas fa-eye"></i></a>
                         </div>
                     </div>
                 </div>
+                
         
-                <div class="col-md-4">
-                    <div class="card border-0 shadow-sm">
+                <div class="col-md-4" hidden>
+                    <div class="card ">
                         <div class="card-body">
                             <p class="text-secondary mb-2">Currently On Duty</p>
                             <h3 class="fw-bold text-primary">--</h3>

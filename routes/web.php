@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\SiteController;
 use App\Http\Controllers\AccountsController;
 use App\Http\Controllers\GuardController;
 use App\Http\Controllers\AttendanceController;
@@ -22,9 +24,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout',[LoginController::class,'logout'])->name('logout');
 });
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', [AdminController::class,'dashboard',])->name('admin.dashboard');
-    Route::get('/admin/guards', [AdminController::class,'guards',])->name('admin.guards');
-    Route::get('/admin/companies', [AdminController::class,'companies',])->name('admin.companies');
+    Route::prefix('/admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/dashboard', [AdminController::class,'dashboard',])->name('dashboard');
+        // Route::get('/guards', [AdminController::class,'guards',])->name('guards');
+        Route::resource('/guards', GuardController::class)->except(['show']);
+        Route::resource('/companies', CompanyController::class)->except(['show']);
+        Route::resource('/sites', SiteController::class)->except(['show']);
+    });
     // Route::get('/admin/companies', [AdminController::class,'companies',])->name('admin.companies');
 });
 Route::middleware(['auth', 'role:accounts'])->group(function () {

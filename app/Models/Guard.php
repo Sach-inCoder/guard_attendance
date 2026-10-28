@@ -12,14 +12,22 @@ class Guard extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'employee_id', 'full_name', 'joining_date',
-        'designation', 'employment_status', 'emergency_contact', 'notes',
+        'user_id',
+        'employee_id',
+        'full_name',
+        'joining_date',
+        'designation',
+        'employment_status',
+        'emergency_contact',
+        'notes',
     ];
-
     protected function casts(): array
     {
-        return ['joining_date' => 'date'];
+        return [
+            'joining_date' => 'date',
+        ];
     }
+
 
     public function user(): BelongsTo
     {

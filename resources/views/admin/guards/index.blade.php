@@ -2,7 +2,7 @@
 @section('page-title', 'Guards')
 @section('content')
 <div class="">
-    <a class="btn btn-success btn-sm" href="">Add Guard</a>
+    <a class="btn btn-success btn-sm" href="{{ route('admin.guards.create') }}">Add Guard</a>
     <hr>
     <div
         class="table-responsive"
@@ -28,9 +28,9 @@
                 >
                     <td>{{ $guards->firstItem() + $loop->index }}</td>
                     <td scope="row">{{ $guard->employee_id }} | {{ $guard->full_name }}</td>
-                    <td><span class="badge text-bg-{{$guard->employment_status == 'active' ? 'success' : 'danger' }}">{{$guard->employment_status == 'active' ? 'Active' : 'Not Active' }}</span></td>
+                    <td><span class="badge text-bg-{{$guard->employment_status == '1' ? 'success' : 'danger' }}">{{$guard->employment_status == 1 ? 'Active' : 'Not Active' }}</span></td>
                     <td>
-                        <a href="" class="btn btn-success btn-sm">Edit</a>
+                        <a href="{{ route('admin.guards.edit',$guard) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></a>
                     </td>
                 </tr>
                 @endforeach
