@@ -28,16 +28,13 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     ->name('admin.')
     ->group(function () {
         Route::get('/dashboard', [AdminController::class,'dashboard',])->name('dashboard');
-        // Route::get('/guards', [AdminController::class,'guards',])->name('guards');
         Route::resource('/guards', GuardController::class)->except(['show']);
         Route::resource('/companies', CompanyController::class)->except(['show']);
         Route::resource('/sites', SiteController::class)->except(['show']);
     });
-    // Route::get('/admin/companies', [AdminController::class,'companies',])->name('admin.companies');
 });
 Route::middleware(['auth', 'role:accounts'])->group(function () {
     Route::get('/accounts/dashboard', [AccountsController::class,'dashboard',])->name('accounts.dashboard');
-    
 });
 Route::middleware(['auth', 'role:guard'])->group(function () {
     Route::get('/guard/dashboard', [GuardController::class,'dashboard',])->name('guard.dashboard');
@@ -45,5 +42,12 @@ Route::middleware(['auth', 'role:guard'])->group(function () {
     ->name('my.')
     ->group(function (){
         Route::get('/attendance',[AttendanceController::class,'myAttendance'])->name('attendance');
+        Route::post('/attendance/check-in',[AttendanceController::class,'checkIn'])
+        ->middleware('throttle:10,1')
+        ->name('attendance.check-in');
+
+        Route::post('/attendance/check-out',[AttendanceController::class,'checkOut'])
+        ->middleware('throttle:10,1')
+        ->name('attendance.check-out');
     });
 });
