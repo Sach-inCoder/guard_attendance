@@ -10,7 +10,7 @@ class AdminController extends Controller
     public function dashboard()
     {
         $stats = [
-            "guards"=> Guard::where("employment_status","active")->count(),
+            "guards"=> Guard::where("employment_status","1")->count(),
             "companies"=> Company::where("is_active",1)->count(),
         ];
         return view('admin.dashboard',compact('stats'));

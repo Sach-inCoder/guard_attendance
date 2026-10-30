@@ -36,11 +36,20 @@
                 Duty On:
                 <b>{{ $assignment?->site?->name ?? 'Not Assigned' }}</b>
             </p>
+            <p class="card-text">
+                Address:
+                <b>{{ $assignment?->site->address }}</b>
+            </p>
 
             <p class="card-text">
                 Site Assigned By:
                 <b>{{ $assignment?->assignedBy?->name ?? 'N/A' }}</b>
             </p>
         </div>
+    </div>
+    <div class="text-center py-5">
+        <button class="btn btn-lg btn-outline-success">
+            Check In
+        </button>
     </div>
 @endsection

@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\GuardSiteAssignmentController;
+use App\Http\Controllers\QrCodeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\AccountsController;
+use App\Http\Controllers\GuardAttendanceController;
 use App\Http\Controllers\GuardController;
 use App\Http\Controllers\AttendanceController;
 
@@ -31,13 +34,33 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::resource('/guards', GuardController::class)->except(['show']);
         Route::resource('/companies', CompanyController::class)->except(['show']);
         Route::resource('/sites', SiteController::class)->except(['show']);
+        Route::resource('/qrcodes', QrCodeController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
+        Route::get('/qrcodes/{qrcode}/image', [
+            QrCodeController::class,
+            'image',
+        ])->name('qrcodes.image');
+
+        Route::get('/assignments/create', [
+            GuardSiteAssignmentController::class,
+            'create',
+        ])->name('assignments.create');
+        Route::post('/assignments', [
+            GuardSiteAssignmentController::class,
+            'store',
+        ])->name('assignments.store');
     });
 });
-Route::middleware(['auth', 'role:accounts'])->group(function () {
-    Route::get('/accounts/dashboard', [AccountsController::class,'dashboard',])->name('accounts.dashboard');
-});
+// Route::middleware(['auth', 'role:accounts'])->group(function () {
+//     Route::get('/accounts/dashboard', [AccountsController::class,'dashboard',])->name('accounts.dashboard');
+// });
 Route::middleware(['auth', 'role:guard'])->group(function () {
     Route::get('/guard/dashboard', [GuardController::class,'dashboard',])->name('guard.dashboard');
+    Route::get('/qr/scan', [GuardAttendanceController::class, 'scan'])
+        ->name('guard.qr.scan');
+    
+    Route::post('/qr/attendance', [GuardAttendanceController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('guard.qr.attendance');
     Route::prefix('/guard/my')
     ->name('my.')
     ->group(function (){

@@ -35,3 +35,11 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+<script>
+    $("form").on('submit',function (e) {
+        // e.preventDefault();
+        $('button[type=submit]').attr('disabled','');
+    })
+</script>
+@endpush

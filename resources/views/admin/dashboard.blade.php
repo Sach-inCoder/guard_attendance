@@ -13,7 +13,7 @@
                         Security Workforce Management
                     </p>
                 </div>
-                <span class="badge text-bg-success">System Online</span>
+                <a href="{{ route('admin.assignments.create') }}" class="badge text-bg-success">Assign Guard</a>
             </div>
             <div class="row g-3">
                 <div class="col-md-4">

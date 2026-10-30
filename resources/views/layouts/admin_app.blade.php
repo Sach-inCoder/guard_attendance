@@ -41,6 +41,10 @@
                     class="nav-link {{ request()->routeIs('admin.sites.index') ? 'active' : '' }}">
                     Sites
                 </a>
+                <a href="{{ route('admin.qrcodes.index') }}"
+                    class="nav-link {{ request()->routeIs('admin.qrcodes.index') ? 'active' : '' }}">
+                    QR Codes
+                </a>
             </nav>
         </aside>
         <main class="admin-main">
