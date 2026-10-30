@@ -18,7 +18,7 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
         body {
-            min-height: 100vh;
+            min-height: 100dvh;
             background: #f1f5f9;
             display: flex;
             align-items: center;
@@ -110,7 +110,17 @@ input::-webkit-inner-spin-button {
                             required
                         >
                     </div>
-
+                    <div class="mb-3">
+                        <label>
+                            <input
+                                type="checkbox"
+                                class="form-check-input"
+                                name="remember"
+                                @checked(old('remember'))
+                                value="1">
+                            Remember me
+                        </label>
+                    </div>
                     <button
                         type="submit"
                         class="btn btn-primary btn-lg w-100"
@@ -126,5 +136,13 @@ input::-webkit-inner-spin-button {
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $("form").on('submit',function (e) {
+            // e.preventDefault();
+            $('button[type=submit]').attr('disabled','');
+        })
+    </script>
 </body>
 </html>

@@ -16,7 +16,8 @@
                 </caption>
                 <tr>
                     <th>S.no</th>
-                    <th>SITE</th>
+                    <th>Unit Name</th>
+                    <th>SITE Address</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -28,12 +29,21 @@
                 >
                     <td>{{ $qrCodes->firstItem() + $loop->index }}</td>
                     <td scope="row">
+                        {{ $qrCode->site->company['name'] }}
+                    </td>
+                    <td scope="row">
                         {{ $qrCode->site['address'] }} | Created By {{ $qrCode->creator['name'] }}
                     </td>
                     <td><span class="badge text-bg-{{$qrCode->is_active == '1' ? 'success' : 'danger' }}">{{$qrCode->is_active == 1 ? 'Active' : 'Not Active' }}</span></td>
                     <td>
-                        <a href="javascript:void(0)" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></a>
-                        <a href="{{route('admin.qrcodes.show',$qrCode)}}" class="btn btn-sm btn-outline-primary"><i class="fas fa-qrcode"></i></a>
+                        <form action="{{ route('admin.qrcodes.destroy',$qrCode) }}" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button onclick="return confirm('Do yo want to delete this QR?')" type="submit"  class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                        </form>
+                        <a href="{{route('admin.qrcodes.show',$qrCode)}}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-qrcode"></i>
+                        </a>
                     </td>
                 </tr>
                 @endforeach

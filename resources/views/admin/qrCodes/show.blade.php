@@ -5,6 +5,7 @@
     <div class="card mx-auto shadow-sm" style="max-width: 550px;">
         <div class="card-body text-center p-4">
             <h3>{{ $qrcode->label }}</h3>
+            <h5>{{ $qrcode->site->company['name'] }}</h5>
             <p class="text-secondary">
                 Site: {{ $qrcode->site->address }}
             </p>

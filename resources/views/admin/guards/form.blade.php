@@ -48,7 +48,7 @@
                 name="joining_date"
                 id="joining_date"
                 placeholder="Joining Date"
-                value="{{ old('joining_date', $guard->joining_date?->format('Y-m-d') ?? '') }}"
+                value="{{ old('joining_date', ($guard ?? null)?->joining_date?->format('Y-m-d')) }}"
             />
         </div>
     </div>

@@ -25,7 +25,7 @@ class LoginController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials,$request->boolean('remember'))) {
             throw ValidationException::withMessages([
                 'mobile' => 'The mobile number or password is incorrect.',
             ]);

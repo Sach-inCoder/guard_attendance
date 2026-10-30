@@ -18,7 +18,16 @@ class QrCodeController extends Controller
             'site_id' => ['required', 'integer', 'exists:sites,id'],
             'label' => ['nullable', 'string', 'max:100'],
         ]);
+        $existingQr = QrCode::where('site_id', $validated['site_id'])
+            ->first();
 
+        if ($existingQr) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'site_id' => 'This site already has a QR code. Delete the existing QR code before generating a new one.',
+                ]);
+        }
         $plainToken = Str::random(64);
         $publicId = (string) Str::uuid();
 
@@ -69,6 +78,7 @@ class QrCodeController extends Controller
     public function index()
     {
         $qrCodes = QrCode::with(['site', 'creator'])
+            ->where('is_active', 1)
             ->latest()
             ->paginate(12);
 
@@ -112,14 +122,17 @@ class QrCodeController extends Controller
     }
     public function destroy(QrCode $qrcode)
     {
-        // Revoke instead of deleting the record.
-        $qrcode->update([
-            'is_active' => false,
-            'revoked_at' => now(),
-        ]);
+        // Delete saved QR image, if it exists
+        $path = 'qr-codes/' . $qrcode->public_id . '.png';
+
+        if (Storage::disk('local')->exists($path)) {
+            Storage::disk('local')->delete($path);
+        }
+
+        $qrcode->delete();
 
         return redirect()
             ->route('admin.qrcodes.index')
-            ->with('success', 'QR code revoked successfully.');
+            ->with('success', 'QR code deleted successfully. You can now generate a new QR code for this site.');
     }
 }

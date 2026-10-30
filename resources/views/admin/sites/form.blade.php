@@ -27,7 +27,7 @@
             <select name="company_id" id="company_id" class="form-select" required>
                 <option value="">-- select company --</option>
                 @foreach ($companies as $company)
-                <option {{ old('company_id',$site->company['id']) == $company->id ? 'selected' : '' }} value="{{ $company->id }}">{{ $company->name }}</option>
+                <option @selected(old('company_id',$site->company_id ?? null) == $company->id) value="{{ $company->id }}">{{ $company->name }}</option>
                 @endforeach
             </select>
             @error('company_id')

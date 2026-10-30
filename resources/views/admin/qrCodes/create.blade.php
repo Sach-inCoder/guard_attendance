@@ -18,10 +18,18 @@
                 </div>
             </div>
             <div class="card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <form action="{{ route('admin.qrcodes.store') }}" method="POST" enctype="multipart/form-data">
-                    
                     <div class="mb-3">
-                        <label for="site_id" class="form-label">Select SITE</label>
+                        <label for="site_id" class="form-label">Select Site</label>
                         <select
                             class="form-select"
                             name="site_id"
