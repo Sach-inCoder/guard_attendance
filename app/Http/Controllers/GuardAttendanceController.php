@@ -139,92 +139,102 @@ class GuardAttendanceController extends Controller
         $scheduledStart = null;
         $scheduledEnd = null;
 
-        // 4. Resolve the shift business date
-        foreach ($assignments as $item) {
+        $openAttendance = Attendance::with('assignment.shift')
+            ->where('guard_id', $guard->id)
+            ->where('site_id', $qr->site_id)
+            ->whereNull('check_out_at')
+            ->whereNotNull('check_in_at')
+            ->whereIn('attendance_date', [$today, $yesterday])
+            ->whereIn('guard_site_assignment_id', $assignments->pluck('id'))
+            ->orderByDesc('check_in_at')
+            ->first();
+        if ($openAttendance) {
+            // Existing attendance means this scan is for checkout.
+            $assignment = $assignments->firstWhere(
+                'id',
+                $openAttendance->guard_site_assignment_id
+            );
 
-            $shift = $item->shift;
+            $attendanceDate = $openAttendance->attendance_date->toDateString();
 
-            if (!$shift || !$item->site) {
-                continue;
-            }
+            $shift = $assignment->shift;
 
-            $startTime = $item->scheduled_start_time
+            $startTime = $assignment->scheduled_start_time
                 ?? $shift->start_time;
 
-            $endTime = $item->scheduled_end_time
+            $endTime = $assignment->scheduled_end_time
                 ?? $shift->end_time;
 
-            $crossesMidnight = (bool) $shift->crosses_midnight;
-
-            // For overnight shifts, early morning belongs to yesterday.
-            $businessDate = (
-                $crossesMidnight &&
-                $now->format('H:i:s') <= $endTime
-            ) ? $yesterday : $today;
-
-            // Check assignment date range.
-            if (
-                $item->starts_on->toDateString() > $businessDate ||
-                (
-                    $item->ends_on &&
-                    $item->ends_on->toDateString() < $businessDate
-                )
-            ) {
-                continue;
-            }
-
-            $shiftStart = Carbon::parse(
-                $businessDate . ' ' . $startTime
+            $scheduledStart = Carbon::parse(
+                $attendanceDate . ' ' . $startTime
             );
 
-            $shiftEnd = Carbon::parse(
-                $businessDate . ' ' . $endTime
+            $scheduledEnd = Carbon::parse(
+                $attendanceDate . ' ' . $endTime
             );
 
-            if ($crossesMidnight) {
-                $shiftEnd->addDay();
+            if ($shift->crosses_midnight) {
+                $scheduledEnd->addDay();
             }
+        } else {
+            // No open attendance: resolve a new check-in.
+            foreach ($assignments as $item) {
 
-            // Only allow scans during the assigned shift.
-            if ($now->lt($shiftStart) || $now->gt($shiftEnd)) {
-                continue;
+                $shift = $item->shift;
+
+                if (!$shift || !$item->site) {
+                    continue;
+                }
+
+                $startTime = $item->scheduled_start_time
+                    ?? $shift->start_time;
+
+                $endTime = $item->scheduled_end_time
+                    ?? $shift->end_time;
+
+                $crossesMidnight = (bool) $shift->crosses_midnight;
+
+                $businessDate = (
+                    $crossesMidnight &&
+                    $now->format('H:i:s') <= $endTime
+                ) ? $yesterday : $today;
+
+                if (
+                    $item->starts_on->toDateString() > $businessDate ||
+                    (
+                        $item->ends_on &&
+                        $item->ends_on->toDateString() < $businessDate
+                    )
+                ) {
+                    continue;
+                }
+
+                $shiftStart = Carbon::parse(
+                    $businessDate . ' ' . $startTime
+                );
+
+                $shiftEnd = Carbon::parse(
+                    $businessDate . ' ' . $endTime
+                );
+
+                if ($crossesMidnight) {
+                    $shiftEnd->addDay();
+                }
+
+                $earliestCheckIn = $shiftStart->copy()->subMinutes(30);
+
+                if ($now->lt($earliestCheckIn) || $now->gte($shiftEnd)) {
+                    continue;
+                }
+
+                $assignment = $item;
+                $attendanceDate = $businessDate;
+                $scheduledStart = $shiftStart;
+                $scheduledEnd = $shiftEnd;
+
+                break;
             }
-
-            $assignment = $item;
-            $attendanceDate = $businessDate;
-            $scheduledStart = $shiftStart;
-            $scheduledEnd = $shiftEnd;
-
-            break;
         }
-        // dd([
-        //     'current_time' => now()->toDateTimeString(),
-        //     'today' => $today,
-        //     'yesterday' => $yesterday,
-        //     'guard_id' => $guard->id,
-        //     'qr_site_id' => $qr->site_id,
-        //     'assignments_found' => $assignments->count(),
-        //     'assignments' => $assignments->map(function ($item) {
-        //         return [
-        //             'assignment_id' => $item->id,
-        //             'guard_id' => $item->guard_id,
-        //             'site_id' => $item->site_id,
-        //             'site_name' => $item->site?->name,
-        //             'shift' => $item->shift?->name,
-        //             'start_time' => $item->shift?->start_time,
-        //             'end_time' => $item->shift?->end_time,
-        //             'crosses_midnight' => $item->shift?->crosses_midnight,
-        //             'starts_on' => $item->starts_on?->toDateString(),
-        //             'ends_on' => $item->ends_on?->toDateString(),
-        //             'status' => $item->status,
-        //         ];
-        //     }),
-        // ]);
-        // dd([
-        //     'laravel_time' => now()->format('Y-m-d H:i:s'),
-        //     'timezone' => config('app.timezone'),
-        //     'php_timezone' => date_default_timezone_get(),
-        // ]);
         if (!$assignment) {
             throw ValidationException::withMessages([
                 'id' => 'No active assignment or valid shift found for this site at the current time.',
@@ -350,6 +360,19 @@ class GuardAttendanceController extends Controller
                     'id' => 'You have already checked out for this shift.',
                 ]);
             }
+            $workedMinutes = Carbon::parse(
+                $attendance->check_in_at
+            )->diffInMinutes($now);
+
+            $attendance->update([
+                'check_out_at' => $now,
+                'check_out_latitude' => $latitude,
+                'check_out_longitude' => $longitude,
+                'check_out_accuracy_m' => $accuracy,
+                'worked_minutes' => $workedMinutes,
+                'check_out_method' => 'qr_gps',
+                'updated_by' => $user->id,
+            ]);
 
             // Prevent checkout before check-in
             if ($now->lte($attendance->check_in_at)) {

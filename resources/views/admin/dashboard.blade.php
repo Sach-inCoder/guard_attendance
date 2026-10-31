@@ -17,32 +17,33 @@
             </div>
             <div class="row g-3">
                 <div class="col-md-4">
-                    <div class="card ">
+                    <div class="card h-100">
                         <div class="card-body">
                             <p class="text-secondary mb-2">Active Guards</p>
                             <h3 class="fw-bold">{{$stats['guards']}}</h3>
-                            <a href="{{ route('admin.guards.index') }}" class="btn btn-primary btn-sm">View <i class="fas fa-eye"></i></a>
                         </div>
+                        <a href="{{ route('admin.guards.index') }}" class="card-footer text-white btn bg-primary btn-sm mt-auto d-block">View <i class="fas fa-eye"></i></a>
                     </div>
                 </div>
                 
                 <div class="col-md-4">
-                    <div class="card ">
+                    <div class="card h-100">
                         <div class="card-body">
                             <p class="text-secondary mb-2">Active Companies</p>
                             <h3 class="fw-bold">{{$stats['companies']}}</h3>
-                            <a href="{{ route('admin.companies.index') }}" class="btn btn-primary btn-sm">View <i class="fas fa-eye"></i></a>
                         </div>
+                        <a href="{{ route('admin.companies.index') }}" class="card-footer text-white btn bg-primary btn-sm mt-auto d-block">View <i class="fas fa-eye"></i></a>
                     </div>
                 </div>
                 
         
-                <div class="col-md-4" hidden>
-                    <div class="card ">
+                <div class="col-md-4">
+                    <div class="card h-100">
                         <div class="card-body">
-                            <p class="text-secondary mb-2">Currently On Duty</p>
-                            <h3 class="fw-bold text-primary">--</h3>
+                            {{-- <p class="text-secondary mb-2">Attendance Reports</p> --}}
+                            <h3 class="fw-bold">Attendance Reports</h3>
                         </div>
+                        <a href="{{ route('admin.reports.attendance-register') }}" class="card-footer text-white btn bg-primary btn-sm mt-auto d-block">Report <i class="fa-solid fa-clipboard-user"></i></a>
                     </div>
                 </div>
             </div>

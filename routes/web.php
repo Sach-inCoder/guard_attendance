@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\GuardSiteAssignmentController;
 use App\Http\Controllers\QrCodeController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AdminController;
@@ -34,6 +35,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::resource('/guards', GuardController::class)->except(['show']);
         Route::resource('/companies', CompanyController::class)->except(['show']);
         Route::resource('/sites', SiteController::class)->except(['show']);
+        Route::get('/reports/attendance',[ReportController::class,'attendance'])->name('reports.attendance');
+        Route::get('/reports/attendance-register',[ReportController::class, 'attendanceRegister'])->name('reports.attendance-register');
         Route::resource('/qrcodes', QrCodeController::class)->only(['index', 'create', 'store', 'show', 'destroy']);
         Route::get('/qrcodes/{qrcode}/image', [
             QrCodeController::class,

@@ -1,0 +1,173 @@
+@if($company && $site)
+
+        <div class="d-flex justify-content-end mb-3 no-print">
+            <button type="button"
+                    onclick="window.print()"
+                    class="btn btn-dark">
+                <i class="bi bi-printer me-1"></i> Print Register
+            </button>
+        </div>
+
+        <div id="printRegister" class="register-paper">
+            {{-- Header --}}
+            <div class="text-center mb-3">
+                <div class="register-title">
+                    {{ strtoupper($company->name) }}
+                </div>
+
+                <div>
+                    {{ $site->address }}
+                </div>
+
+                <h5 class="fw-bold mt-2">
+                    MONTHLY ATTENDANCE REGISTER
+                </h5>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-6">
+                    <strong>UNIT NAME:</strong>
+                    {{ $site->name }}
+                </div>
+
+                <div class="col-6 text-end">
+                    <strong>INVOICE NO.:</strong>
+                    <span class="register-header-line"></span>
+                </div>
+
+                <div class="col-6 mt-2">
+                    <strong>UNIT ADDRESS:</strong>
+                    {{ $site->address }}
+                </div>
+
+                <div class="col-6 text-end mt-2">
+                    <strong>MONTH / YEAR:</strong>
+                    {{ strtoupper($period->format('F Y')) }}
+                </div>
+
+                <div class="col-12 mt-2">
+                    <strong>NAME OF AREA OFFICER:</strong>
+                    <span class="register-header-line"></span>
+                </div>
+            </div>
+
+            {{-- Attendance Table --}}
+            <table class="register-table">
+
+                <thead>
+                    <tr>
+                        <th rowspan="2">S. NO.</th>
+                        <th rowspan="2">ID NO.</th>
+                        <th rowspan="2">RANK</th>
+                        <th rowspan="2">NAME</th>
+
+                        <th colspan="{{ $daysInMonth }}">
+                            MONTHLY ATTENDANCE
+                        </th>
+
+                        <th rowspan="2">TOTAL DUTY</th>
+                        <th rowspan="2" class="signature-column">
+                            EMPLOYEE SIGNATURE
+                        </th>
+                    </tr>
+
+                    <tr>
+                        @for($day = 1; $day <= $daysInMonth; $day++)
+                            <th>{{ $day }}</th>
+                        @endfor
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @forelse($register as $index => $guard)
+
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+
+                            <td class="employee-id">
+                                {{ $guard['employee_id'] }}
+                            </td>
+
+                            <td></td>
+
+                            <td class="guard-name">
+                                {{ $guard['name'] }}
+                            </td>
+
+                            @for($day = 1; $day <= $daysInMonth; $day++)
+                                <td>{{ $guard['daily'][$day] }}</td>
+                            @endfor
+
+                            <td>
+                                {{ number_format($guard['total_duty'], 1) }}
+                            </td>
+
+                            <td></td>
+                        </tr>
+
+                    @empty
+
+                        <tr>
+                            <td colspan="{{ $daysInMonth + 6 }}"
+                                class="py-4">
+                                No guards assigned to this site during this month.
+                            </td>
+                        </tr>
+
+                    @endforelse
+
+                </tbody>
+            </table>
+
+            {{-- Attendance Legend --}}
+            <div class="mt-3 small">
+                <strong>NOTE:</strong>
+                P - Present &nbsp; | &nbsp;
+                L - Late &nbsp; | &nbsp;
+                HD - Half Day &nbsp; | &nbsp;
+                A - Absent &nbsp; | &nbsp;
+                WO - Weekly Off &nbsp; | &nbsp;
+                H - Holiday
+            </div>
+
+            {{-- Signature Footer --}}
+            <div class="register-footer">
+
+                <div class="signature-box">
+                    Signature of Supervisor
+                </div>
+
+                <div class="signature-box">
+                    Signature of Field Officer
+                </div>
+
+                <div class="signature-box">
+                    Checked By Client
+                </div>
+
+                <div class="signature-box">
+                    Signature of Account Officer and HR
+                </div>
+
+                <div class="signature-box">
+                    Signature of Director of Operation
+                </div>
+
+            </div>
+
+        </div>
+
+    @else
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-file-earmark-spreadsheet fs-1 text-muted"></i>
+                <h5 class="mt-3">Select Company and Site</h5>
+                <p class="text-muted mb-0">
+                    Choose a company, site, month and year to generate the attendance register.
+                </p>
+            </div>
+        </div>
+
+    @endif
