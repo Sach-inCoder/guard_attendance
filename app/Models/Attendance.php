@@ -40,7 +40,7 @@ class Attendance extends Model
         ];
     }
 
-    public function guard(): BelongsTo
+    public function guardProfile(): BelongsTo
     {
         return $this->belongsTo(Guard::class);
     }

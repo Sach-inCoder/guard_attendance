@@ -197,7 +197,34 @@ class GuardAttendanceController extends Controller
 
             break;
         }
-
+        // dd([
+        //     'current_time' => now()->toDateTimeString(),
+        //     'today' => $today,
+        //     'yesterday' => $yesterday,
+        //     'guard_id' => $guard->id,
+        //     'qr_site_id' => $qr->site_id,
+        //     'assignments_found' => $assignments->count(),
+        //     'assignments' => $assignments->map(function ($item) {
+        //         return [
+        //             'assignment_id' => $item->id,
+        //             'guard_id' => $item->guard_id,
+        //             'site_id' => $item->site_id,
+        //             'site_name' => $item->site?->name,
+        //             'shift' => $item->shift?->name,
+        //             'start_time' => $item->shift?->start_time,
+        //             'end_time' => $item->shift?->end_time,
+        //             'crosses_midnight' => $item->shift?->crosses_midnight,
+        //             'starts_on' => $item->starts_on?->toDateString(),
+        //             'ends_on' => $item->ends_on?->toDateString(),
+        //             'status' => $item->status,
+        //         ];
+        //     }),
+        // ]);
+        // dd([
+        //     'laravel_time' => now()->format('Y-m-d H:i:s'),
+        //     'timezone' => config('app.timezone'),
+        //     'php_timezone' => date_default_timezone_get(),
+        // ]);
         if (!$assignment) {
             throw ValidationException::withMessages([
                 'id' => 'No active assignment or valid shift found for this site at the current time.',
@@ -214,7 +241,7 @@ class GuardAttendanceController extends Controller
         }
 
         // 6. Verify GPS accuracy
-        if ($validated['accuracy'] > 50) {
+        if ($validated['accuracy'] > 25) {
             throw ValidationException::withMessages([
                 'latitude' => 'GPS accuracy is too low. Please try again in an open area.',
             ]);
@@ -242,9 +269,9 @@ class GuardAttendanceController extends Controller
             min(1, sqrt($a))
         );
 
-        if ($distance > 50) {
+        if ($distance > 25) {
             throw ValidationException::withMessages([
-                'latitude' => 'You are outside the allowed 50-metre site radius. Current distance: '
+                'latitude' => 'You are outside the allowed 25-metre site radius. Current distance: '
                     . round($distance) . ' metres.',
             ]);
         }

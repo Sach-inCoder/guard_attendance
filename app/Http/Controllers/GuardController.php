@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Guard;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\GuardSiteAssignment;
+use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +15,34 @@ class GuardController extends Controller
 {
     public function dashboard()
     {
-        return view('guard.dashboard');
+        $guard = auth()->user()->guardProfile;
+
+        $today = now()->toDateString();
+
+        $assignment = GuardSiteAssignment::with(['site', 'shift'])
+            ->where('guard_id', $guard->id)
+            ->where('status', 'active')
+            ->whereDate('starts_on', '<=', $today)
+            ->where(function ($query) use ($today) {
+                $query->whereNull('ends_on')
+                    ->orWhereDate('ends_on', '>=', $today);
+            })
+            ->first();
+
+        $attendance = null;
+
+        if ($assignment) {
+            $attendance = Attendance::where('guard_id', $guard->id)
+                ->where('guard_site_assignment_id', $assignment->id)
+                ->whereDate('attendance_date', $today)
+                ->first();
+        }
+
+        return view('guard.dashboard', compact(
+            'guard',
+            'assignment',
+            'attendance'
+        ));
     }
     public function index()
     {

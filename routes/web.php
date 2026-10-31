@@ -57,7 +57,6 @@ Route::middleware(['auth', 'role:guard'])->group(function () {
     Route::get('/guard/dashboard', [GuardController::class,'dashboard',])->name('guard.dashboard');
     Route::get('/qr/scan', [GuardAttendanceController::class, 'scan'])
         ->name('guard.qr.scan');
-    
     Route::post('/qr/attendance', [GuardAttendanceController::class, 'store'])
         ->middleware('throttle:10,1')
         ->name('guard.qr.attendance');
@@ -68,7 +67,6 @@ Route::middleware(['auth', 'role:guard'])->group(function () {
         Route::post('/attendance/check-in',[AttendanceController::class,'checkIn'])
         ->middleware('throttle:10,1')
         ->name('attendance.check-in');
-
         Route::post('/attendance/check-out',[AttendanceController::class,'checkOut'])
         ->middleware('throttle:10,1')
         ->name('attendance.check-out');
